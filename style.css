@@ -1,0 +1,39 @@
+/* HERO */
+.hero-img {
+    /*height: 60vh;
+    object-fit: cover;*/
+}
+
+/* Si algún día quieres volver al hero desde CSS: 
+.hero { height: 60vh; }
+*/
+
+
+/* Tarjetas de productos */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; /* NUEVO */
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Hace que todas las tarjetas tengan misma altura y botones abajo */
+.product-card .card-body {
+    flex: 1; 
+    display: flex; 
+    flex-direction: column;
+}
+
+.product-card .btn {
+    margin-top: auto;
+}
+
+/* Footer */
+footer {
+    font-size: 14px;
+    letter-spacing: 1px;
+}
