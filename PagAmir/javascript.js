@@ -136,7 +136,7 @@ document.getElementById("btnComprar").addEventListener("click", () => {
     mensaje += "%0A¿Está disponible?";
 
     // Tu número de WhatsApp con código de país (ejemplo Perú: 51)
-    let numero = "51986281034";
+    let numero = "51941115384";
 
     let url = `https://wa.me/${numero}?text=${mensaje}`;
 
