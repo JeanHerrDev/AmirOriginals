@@ -4,11 +4,6 @@
     object-fit: cover;*/
 }
 
-/* Si algún día quieres volver al hero desde CSS: 
-.hero { height: 60vh; }
-*/
-
-
 /* Tarjetas de productos */
 .product-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -37,3 +32,4 @@ footer {
     font-size: 14px;
     letter-spacing: 1px;
 }
+
