@@ -119,17 +119,20 @@ function agregarEventosEliminar() {
    ENVIAR CARRITO A WHATSAPP
 --------------------------- */
 
-document.getElementById("btnComprar").addEventListener("click", () => {
+const btnComprar = document.getElementById("btnComprar");
+
+if (btnComprar) {
+  btnComprar.addEventListener("click", () => {
 
     if (carrito.length === 0) {
-        alert("Tu carrito está vacío.");
-        return;
+      alert("Tu carrito está vacío.");
+      return;
     }
 
     let mensaje = "Hola, quiero realizar una compra:%0A%0A";
 
     carrito.forEach(producto => {
-        mensaje += `• ${producto.nombre} (x${producto.cantidad}) - S/ ${(producto.precio * producto.cantidad).toFixed(2)}%0A`;
+      mensaje += `• ${producto.nombre} (x${producto.cantidad}) - S/ ${(producto.precio * producto.cantidad).toFixed(2)}%0A`;
     });
 
     mensaje += `%0ATotal: S/ ${carritoTotal.textContent}%0A`;
@@ -141,4 +144,100 @@ document.getElementById("btnComprar").addEventListener("click", () => {
     let url = `https://wa.me/${numero}?text=${mensaje}`;
 
     window.open(url, "_blank");
+  });
+}
+
+
+/* --------------------------
+   BUSCADOR + FILTRO CATÁLOGO
+   (por Nombre/Marca o por Modelo)
+--------------------------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.getElementById("searchInput");
+  const filterSelect = document.getElementById("filterSelect");
+  const btnClear = document.getElementById("btnClear");
+  const productosRow = document.getElementById("productosRow");
+  const resultCount = document.getElementById("resultCount");
+  const noResults = document.getElementById("noResults");
+
+  // Si no estamos en catalogo.html (o no existe el buscador), no hacemos nada
+  if (!searchInput || !filterSelect || !productosRow) return;
+
+  // Hacer que la "lupa" sea clickeable (focus al input)
+  const lupa = document.querySelector(".input-group .input-group-text");
+  if (lupa) {
+    lupa.style.cursor = "pointer";
+    lupa.addEventListener("click", () => {
+      searchInput.focus();
+      aplicarFiltro();
+    });
+  }
+
+  // Normaliza texto: minúsculas + sin tildes
+  const normalizar = (txt) =>
+    (txt || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+
+  // Extrae (marca/nombre) y (modelo) desde el título
+  const separarNombreModelo = (titulo) => {
+    const t = (titulo || "").trim();
+    const parts = t.split(" ");
+    const nombre = parts[0] || "";              // ej: INVICTA / BULOVA / NAVIFORCE
+    const modelo = parts.slice(1).join(" ");    // resto del texto
+    return { nombre, modelo, titulo: t };
+  };
+
+  const aplicarFiltro = () => {
+    const q = normalizar(searchInput.value);
+    const modo = filterSelect.value; // "nombre" | "modelo"
+
+    const items = productosRow.querySelectorAll(".col-md-4");
+    let visibles = 0;
+
+    items.forEach((col) => {
+      const titleEl = col.querySelector(".card-title");
+      const titulo = titleEl ? titleEl.textContent : "";
+
+      const { nombre, modelo, titulo: full } = separarNombreModelo(titulo);
+
+      const textoComparar =
+        modo === "modelo"
+          ? normalizar(modelo)
+          : normalizar(nombre + " " + full); // nombre (marca) + todo el título
+
+      const match = q === "" || textoComparar.includes(q);
+
+      col.classList.toggle("d-none", !match);
+      if (match) visibles++;
+    });
+
+    // Texto “X resultados”
+    if (resultCount) {
+      resultCount.textContent = `${visibles} resultado(s)`;
+    }
+
+    // Mensaje “no hay resultados”
+    if (noResults) {
+      noResults.classList.toggle("d-none", visibles !== 0);
+    }
+  };
+
+  // Eventos
+  searchInput.addEventListener("input", aplicarFiltro);
+  filterSelect.addEventListener("change", aplicarFiltro);
+
+  if (btnClear) {
+    btnClear.addEventListener("click", () => {
+      searchInput.value = "";
+      searchInput.focus();
+      aplicarFiltro();
+    });
+  }
+
+  // Estado inicial
+  aplicarFiltro();
 });

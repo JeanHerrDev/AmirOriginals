@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -46,7 +46,38 @@
         <div class="container">
             <h2 class="text-center mb-5 fw-bold">Nuestros Modelos</h2>
 
-            <div class="row g-4">
+            <!-- BUSCADOR + FILTROS -->
+            <div class="row mb-4 g-2 align-items-center" id="catalogo-controls">
+            <div class="col-12 col-md-7">
+                <div class="input-group">
+                <span class="input-group-text" aria-hidden="true">
+                    <!-- LUPA (SVG) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+                    </svg>
+                </span>
+
+                <input id="searchInput" type="search" class="form-control"
+                        placeholder="Buscar reloj..." autocomplete="off">
+
+                <button class="btn btn-outline-secondary" id="btnClear" type="button">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-5">
+                <select id="filterSelect" class="form-select">
+                <option value="nombre" selected>Filtrar por nombre</option>
+                <option value="modelo">Filtrar por modelo</option>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <small class="text-muted" id="resultCount"></small>
+            </div>
+            </div>
+
+
+            <div id="productosRow" class="row g-4">
 
                 <!-- Producto 1 -->
                 <div class="col-md-4">
@@ -2897,6 +2928,11 @@
                         </div>
                     </div>
                 </div> 
+
+                <div id="noResults" class="text-center text-muted mt-4 d-none">
+                No se encontraron relojes con ese criterio.
+                </div>
+
 
             </div>
         </div>
