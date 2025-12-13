@@ -18,7 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", () => {
 
             let nombre = btn.dataset.nombre;
+            let codigo = btn.dataset.codigo || "";   // NUEVO
             let precio = parseFloat(btn.dataset.precio);
+
 
             let producto = carrito.find(p => p.nombre === nombre);
 
@@ -27,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 carrito.push({
                     nombre,
+                    codigo,     // NUEVO
                     precio,
                     cantidad: 1
                 });
@@ -132,8 +135,10 @@ if (btnComprar) {
     let mensaje = "Hola, quiero realizar una compra:%0A%0A";
 
     carrito.forEach(producto => {
-      mensaje += `• ${producto.nombre} (x${producto.cantidad}) - S/ ${(producto.precio * producto.cantidad).toFixed(2)}%0A`;
+      const cod = producto.codigo ? ` [Código: ${producto.codigo}]` : " [Código: SIN CÓDIGO]";
+      mensaje += `• ${producto.nombre}${cod} (x${producto.cantidad}) - S/ ${(producto.precio * producto.cantidad).toFixed(2)}%0A`;
     });
+
 
     mensaje += `%0ATotal: S/ ${carritoTotal.textContent}%0A`;
     mensaje += "%0A¿Está disponible?";
@@ -150,7 +155,7 @@ if (btnComprar) {
 
 /* --------------------------
    BUSCADOR + FILTRO CATÁLOGO
-   (por Nombre/Marca o por Modelo)
+   (por Nombre/Marca o por Código)
 --------------------------- */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -182,18 +187,19 @@ document.addEventListener("DOMContentLoaded", () => {
       .replace(/[\u0300-\u036f]/g, "")
       .trim();
 
-  // Extrae (marca/nombre) y (modelo) desde el título
-  const separarNombreModelo = (titulo) => {
+  // Extrae (marca/nombre) y (codigo) desde el título
+  const separarNombreCodigo = (titulo) => {
     const t = (titulo || "").trim();
     const parts = t.split(" ");
-    const nombre = parts[0] || "";              // ej: INVICTA / BULOVA / NAVIFORCE
-    const modelo = parts.slice(1).join(" ");    // resto del texto
-    return { nombre, modelo, titulo: t };
+    const nombre = parts[0] || "";              
+    const codigo = parts.slice(1).join(" ");    
+    return { nombre, codigo, titulo: t };
   };
+
 
   const aplicarFiltro = () => {
     const q = normalizar(searchInput.value);
-    const modo = filterSelect.value; // "nombre" | "modelo"
+    const modo = filterSelect.value; // "nombre" | "codigo"
 
     const items = productosRow.querySelectorAll(".col-md-4");
     let visibles = 0;
@@ -202,12 +208,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const titleEl = col.querySelector(".card-title");
       const titulo = titleEl ? titleEl.textContent : "";
 
-      const { nombre, modelo, titulo: full } = separarNombreModelo(titulo);
+      const { nombre, codigo: codigoTitulo, titulo: full } = separarNombreCodigo(titulo);
+
+      // leer data-codigo (si existe en el botón)
+      const btn = col.querySelector(".add-cart");
+      const codigoData = btn?.dataset?.codigo ? btn.dataset.codigo : "";
+
+      // prioridad: data-codigo, si no existe usa lo del título
+      const codigoFinal = codigoData || codigoTitulo;
 
       const textoComparar =
-        modo === "modelo"
-          ? normalizar(modelo)
-          : normalizar(nombre + " " + full); // nombre (marca) + todo el título
+        modo === "codigo"
+            ? normalizar(codigoFinal)
+            : normalizar(nombre + " " + full);
+
+
 
       const match = q === "" || textoComparar.includes(q);
 
