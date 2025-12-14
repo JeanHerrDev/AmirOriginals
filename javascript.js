@@ -224,7 +224,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-      const match = q === "" || textoComparar.includes(q);
+      let match;
+
+      if (q === "") {
+        match = true;
+      } else if (modo === "codigo") {
+        // ✅ EXACTO: evita que "N1" muestre "N10", "N11", etc.
+        match = textoComparar === q;
+      } else {
+        // ✅ Nombre: permite coincidencia parcial
+        match = textoComparar.includes(q);
+      }
+
 
       col.classList.toggle("d-none", !match);
       if (match) visibles++;
